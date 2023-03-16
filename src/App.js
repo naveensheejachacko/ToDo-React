@@ -1,11 +1,13 @@
 
 import './App.css';
 import { useState,useEffect } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 function App() {
   const [toDos,setTodos]=useState([])
   const [toDo,setTodo]=useState('')
   // const [deletedToDo,setDelete]=useState([])
-  const [err, setErr] = useState('')
   const [day, setDay] = useState("")
 
   useEffect(() => {
@@ -14,6 +16,8 @@ function App() {
     setDay(dayOfWeek);
   }, []);
 
+
+
   useEffect(()=>{
     document.title=`You have ${toDos.length} pending tasks`
   });
@@ -21,10 +25,19 @@ function App() {
   // addtodo
   const addItem=()=>{
     if (toDo.length === 0) {
-        setErr('required')
-        console.log(err)}
+      toast('Todo can not be empty!', {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: false,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        });
+       }
     else{
-    setErr('')
+  
     // console.log(value)
     setTodos(
     [...toDos,{id:Date.now(),text:toDo,status:false}])} 
@@ -43,14 +56,16 @@ function App() {
       <div className="input">
         <input value={toDo} onChange={(e)=>setTodo(e.target.value)} type="text" placeholder="🖊️ Add item..." />
         <i onClick={addItem} className="fas fa-plus"></i> 
+        
       </div>
+      <ToastContainer />
 
       <div className="todos">
+        
           { toDos.map((obj)=>{
-
             return(
               
-              <div className="todo">
+              <div key={obj.id} className="todo" >
               <div className="left">
                 <input onChange={(e)=>{
                   // console.log(e.target.checked);
@@ -61,7 +76,7 @@ function App() {
                     }
                     return obj2
                   }))
-                }} value={obj.status} type="checkbox" name="" id="" />
+                }} value={obj.status} type="checkbox"  />
                 <p>{obj.text}</p>
               </div>
 
@@ -72,8 +87,9 @@ function App() {
                   let temp;
                   
                   if (obj2.id !== obj.id){
-                    temp = obj2
+                    temp = 404
                   }
+
                   return temp;
                 }));
               }} className="fas fa-times"></i>
@@ -84,38 +100,29 @@ function App() {
           })
         }
 
+    {toDos.map((obj)=>{
+              if(obj.status){
+                return (
+                  <div key={obj.id}  className='Completed'>
+                  <div className='left'>
+                  <strike> <h1>{obj.text}</h1></strike>
+                  </div>
+                  <div className='right'>
+                    Completed            
+                </div>
+                </div>
+
+                )
+              }
+              return null
+            })}
+
         {/* commpleted check */}
-        
-      <h2 className='TaskDone'> Completed Tasks</h2>
+{/*         
+      <h2 className='TaskDone'> Completed Tasks</h2> */}
         
 
-        {toDos.map((obj)=>{
-          if(obj.status){
-            return (
-              <div className='Completed'>
-              <div className='left'>
-              <strike> <h1>{obj.text}</h1></strike>
-              </div>
-              <div className='right'>
-                Completed 
-              <i onClick={(e)=>{
-                setTodos(toDos.filter(obj2 => {
-                  let temp;
-                  
-                  if (obj2.id !== obj.id){
-                    temp = obj2
-                  }
-                  return temp;
-                }));
-              }} className="fas fa-times"></i>
-              
-            </div>
-            </div>
 
-            )
-          }
-          return null
-        })}
         
       </div>
     </div>
